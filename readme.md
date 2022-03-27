@@ -18,6 +18,8 @@ with real devices (Samsung A5 (Android 9) and Samsung A51 (Android 11)).
 
 Any help is appreciated.
 
+The complete project is available on GitHub: https://github.com/MichaelsPlayground/AndroidCameraIntent
+
 AndroidManifest:
 
 <?xml version="1.0" encoding="utf-8"?>
