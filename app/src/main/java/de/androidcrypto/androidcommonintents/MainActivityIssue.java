@@ -1,15 +1,7 @@
 package de.androidcrypto.androidcommonintents;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -19,14 +11,16 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivityIssue extends AppCompatActivity {
     // examples taken from here:
     // https://developer.android.com/reference/android/provider/MediaStore.Images
 
@@ -34,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
 
     static final int  REQUEST_IMAGE_CAPTURE_FULL_RESOLUTION = 4;
-    public static final int CAMERA_IMAGE_PERM_CODE = 101;
     String currentPhotoPath;
     Context context;
 
@@ -52,44 +45,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 System.out.println("### 02 take a photo full");
                 context = v.getContext();
-                // first check the permissions given by the user
-                verifyPermissions();
-                // dispatchTakePictureIntentFullResolution(); // is called from verifyPermissions
+                dispatchTakePictureIntentFullResolution();
             }
         });
-    }
-
-    // new
-    private void verifyPermissions() {
-        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA};
-
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                permissions[0]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                permissions[1]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                permissions[2]) == PackageManager.PERMISSION_GRANTED) {
-            dispatchTakePictureIntentFullResolution();
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    permissions,
-                    CAMERA_IMAGE_PERM_CODE);
-        }
-    }
-
-    // new
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_IMAGE_PERM_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntentFullResolution();
-            } else {
-                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     @Override
@@ -139,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        // old File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        // new:
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
